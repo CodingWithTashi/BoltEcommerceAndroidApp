@@ -9,9 +9,6 @@ how to make e-commerce application with android udemy
 
 # Screen Shot   
 
-![](https://media.giphy.com/media/TGC47ZRjFg5TEBHYDi/giphy.gif)   
+![](https://media.giphy.com/media/IgeEGHbyznUlkbPDni/source.gif)   
 
-Stripe Dashboard   
-
-![](https://github.com/CodingWithTashi/Stripe-Payment-Integration-android/blob/master/app/src/main/res/drawable/td.PNG?raw=true)
 
