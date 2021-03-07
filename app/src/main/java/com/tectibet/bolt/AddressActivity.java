@@ -26,6 +26,7 @@ import com.tectibet.bolt.domain.Category;
 import com.tectibet.bolt.domain.Feature;
 import com.tectibet.bolt.domain.Items;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         final Object obj=getIntent().getSerializableExtra("item");
+        List<Items> itemsList = (ArrayList<Items>) getIntent().getSerializableExtra("itemList");
         mAddressRecyclerView=findViewById(R.id.address_recycler);
         paymentBtn=findViewById(R.id.payment_btn);
         mAddAddress=findViewById(R.id.add_address_btn);
@@ -107,13 +109,20 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
                     name=i.getName();
 
                 }
-                Intent intent=new Intent(AddressActivity.this,PaymentActivity.class);
-                intent.putExtra("amount",amount);
-                intent.putExtra("img_url",url);
-                intent.putExtra("name",name);
-                intent.putExtra("address",address);
+                if(itemsList!=null && itemsList.size()>0){
+                    Intent intent=new Intent(AddressActivity.this,PaymentActivity.class);
+                    intent.putExtra("itemsList", (Serializable) itemsList);
+                    startActivity(intent);
+                }else{
+                    Intent intent=new Intent(AddressActivity.this,PaymentActivity.class);
+                    intent.putExtra("amount",amount);
+                    intent.putExtra("img_url",url);
+                    intent.putExtra("name",name);
+                    intent.putExtra("address",address);
 
-                startActivity(intent);
+                    startActivity(intent);
+                }
+
             }
         });
     }

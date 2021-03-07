@@ -19,10 +19,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.razorpay.Checkout;
 import com.razorpay.PaymentResultListener;
+import com.tectibet.bolt.domain.Items;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PaymentActivity extends AppCompatActivity implements PaymentResultListener {
@@ -33,6 +36,7 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
     String img_url="";
     FirebaseFirestore mStore;
     FirebaseAuth mAuth;
+    List<Items> itemsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +46,22 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         amount=getIntent().getDoubleExtra("amount",0.0);
         img_url=getIntent().getStringExtra("img_url");
         name=getIntent().getStringExtra("name");
+        itemsList = (ArrayList<Items>) getIntent().getSerializableExtra("itemsList");
         mStore= FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
         mTotal=findViewById(R.id.sub_total);
         payBtn=findViewById(R.id.pay_btn);
-        mTotal.setText("$ "+amount+"");
+        if(itemsList!=null &&  itemsList.size()>0){
+            amount= 0.0;
+            for(Items item: itemsList){
+                amount+=item.getPrice();
+
+            }
+            mTotal.setText("$ "+amount+"");
+        }else{
+            mTotal.setText("$ "+amount+"");
+
+        }
         Checkout.preload(getApplicationContext());
 
         payBtn.setOnClickListener(new View.OnClickListener() {
@@ -96,20 +111,41 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
     @Override
     public void onPaymentSuccess(String s) {
         Toast.makeText(this, "Payment Successful", Toast.LENGTH_SHORT).show();
-        Map<String,Object> mMap = new HashMap<>();
-        mMap.put("name",name);
-        mMap.put("img_url",img_url);
-        mMap.put("payment_id",s);
+      if(itemsList!=null && itemsList.size()>0){
+          for(Items items : itemsList){
+              Map<String,Object> mMap = new HashMap<>();
+              mMap.put("name",items.getName());
+              mMap.put("img_url",items.getImg_url());
+              mMap.put("payment_id",s);
 
-        mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
-                .collection("Orders").add(mMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                Intent intent=new Intent(PaymentActivity.this,HomeActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+              mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
+                      .collection("Orders").add(mMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                  @Override
+                  public void onComplete(@NonNull Task<DocumentReference> task) {
+                      Intent intent=new Intent(PaymentActivity.this,HomeActivity.class);
+                      startActivity(intent);
+                      finish();
+                  }
+              });
+          }
+          mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
+                  .collection("Cart").document().delete();
+      }else {
+          Map<String,Object> mMap = new HashMap<>();
+          mMap.put("name",name);
+          mMap.put("img_url",img_url);
+          mMap.put("payment_id",s);
+
+          mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
+                  .collection("Orders").add(mMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+              @Override
+              public void onComplete(@NonNull Task<DocumentReference> task) {
+                  Intent intent=new Intent(PaymentActivity.this,HomeActivity.class);
+                  startActivity(intent);
+                  finish();
+              }
+          });
+      }
     }
 
     @Override

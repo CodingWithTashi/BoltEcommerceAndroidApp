@@ -6,12 +6,22 @@ import java.io.Serializable;
  * Created by kharag on 11-04-2020.
  */
 public class Items implements Serializable {
+
     String description;
     String img_url;
     String name;
     String type;
     int rating;
     double price;
+    String docId;
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
+    }
 
     public Items() {
     }

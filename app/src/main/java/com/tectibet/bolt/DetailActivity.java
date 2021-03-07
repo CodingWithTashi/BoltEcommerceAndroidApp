@@ -1,5 +1,6 @@
 package com.tectibet.bolt;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -13,6 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.tectibet.bolt.domain.BestSell;
 import com.tectibet.bolt.domain.Feature;
 import com.tectibet.bolt.domain.Items;
@@ -30,6 +36,8 @@ public class DetailActivity extends AppCompatActivity {
     BestSell bestSell = null;
     Items items=null;
     private Toolbar mToolbar;
+    FirebaseFirestore mStore;
+    FirebaseAuth mAuth;
 
 
 
@@ -49,6 +57,8 @@ public class DetailActivity extends AppCompatActivity {
         mItemDesc=findViewById(R.id.item_des);
         mAddToCart=findViewById(R.id.item_add_cart);
         mBuyBtn=findViewById(R.id.item_buy_now);
+        mStore =FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         final Object obj=  getIntent().getSerializableExtra("detail");
         if(obj instanceof Feature){
             feature= (Feature) obj;
@@ -100,6 +110,35 @@ public class DetailActivity extends AppCompatActivity {
         mAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(feature!=null){
+                    mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
+                            .collection("Cart").add(feature).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                            Toast.makeText(DetailActivity.this, "Item Added to Cart", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                if(bestSell!=null){
+                    mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
+                            .collection("Cart").add(bestSell).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                            Toast.makeText(DetailActivity.this, "Item Added to Cart", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+                if(items!=null){
+                    mStore.collection("Users").document(mAuth.getCurrentUser().getUid())
+                            .collection("Cart").add(items).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                            Toast.makeText(DetailActivity.this, "Item Added to Cart", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
 
             }
         });
