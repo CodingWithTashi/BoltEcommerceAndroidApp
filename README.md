@@ -9,5 +9,6 @@ how to make e-commerce application with android udemy
 
 # Screen Shot   
 
-![](https://media.giphy.com/media/IgeEGHbyznUlkbPDni/source.gif)
+![](https://media.giphy.com/media/IgeEGHbyznUlkbPDni/source.gif)   
+
 
