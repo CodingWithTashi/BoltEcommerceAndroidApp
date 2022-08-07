@@ -160,4 +160,12 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         intent.putExtra("img_url",img_url);
         startActivity(intent);
     }
+
+    public void payWithPayStack(View view) {
+        Intent intent = new Intent(PaymentActivity.this,PayStackActivity.class);
+        intent.putExtra("amount",amount);
+        intent.putExtra("name",name);
+        intent.putExtra("img_url",img_url);
+        startActivity(intent);
+    }
 }
