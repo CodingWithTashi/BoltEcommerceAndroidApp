@@ -30,6 +30,7 @@ import java.util.Map;
 
 public class PaymentActivity extends AppCompatActivity implements PaymentResultListener {
     TextView mTotal;
+    TextView mSubTotalAmount;
     Button payBtn;
     double amount=0.0;
     String name="";
@@ -50,6 +51,7 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         mStore= FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
         mTotal=findViewById(R.id.sub_total);
+        mSubTotalAmount=findViewById(R.id.total_amt);
         payBtn=findViewById(R.id.pay_btn);
         if(itemsList!=null &&  itemsList.size()>0){
             amount= 0.0;
@@ -60,6 +62,7 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
             mTotal.setText("$ "+amount+"");
         }else{
             mTotal.setText("$ "+amount+"");
+            mSubTotalAmount.setText("$ "+amount+"");
 
         }
         Checkout.preload(getApplicationContext());
