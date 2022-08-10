@@ -67,16 +67,12 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.toString().isEmpty()){
-                    mItemsList.clear();
-                    itemsRecyclerAdapter.notifyDataSetChanged();
-                }else{
-                    searchItem(s.toString());
-                }
+                searchItem(s.toString());
 
             }
         });
@@ -94,19 +90,29 @@ public class HomeActivity extends AppCompatActivity {
     private void searchItem(String text) {
         if(!text.isEmpty()){
             mStore.collection("All").whereGreaterThanOrEqualTo("name",text).get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful() && task.getResult()!=null){
-                                for(DocumentSnapshot doc:task.getResult().getDocuments()){
-                                    Items items=doc.toObject(Items.class);
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful() && task.getResult()!=null){
+                            mItemsList.clear();
+                            for(DocumentSnapshot doc:task.getResult().getDocuments()){
+                                Items items=doc.toObject(Items.class);
+                                if(!mItemsList.contains(items)){
                                     mItemsList.add(items);
-                                    itemsRecyclerAdapter.notifyDataSetChanged();
+
                                 }
                             }
+                            itemsRecyclerAdapter=new ItemsRecyclerAdapter(getApplicationContext(),mItemsList);
+                            mItemRecyclerView.setAdapter(itemsRecyclerAdapter);
+                            itemsRecyclerAdapter.notifyDataSetChanged();
+
                         }
                     });
+        }else{
+            mItemsList.clear();
+            itemsRecyclerAdapter=new ItemsRecyclerAdapter(getApplicationContext(),new ArrayList<>());
+            mItemRecyclerView.setAdapter(itemsRecyclerAdapter);
+            itemsRecyclerAdapter.notifyDataSetChanged();
         }
+
 
 
     }
